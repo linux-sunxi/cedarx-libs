@@ -1,8 +1,8 @@
-
-CC = arm-none-linux-gnueabi-gcc
-CPP = arm-none-linux-gnueabi-g++
-STRIP = arm-none-linux-gnueabi-strip
-AR = arm-none-linux-gnueabi-ar
+CROSS_COMPILE = arm-none-linux-gnueabi-
+CC = $(CROSS_COMPILE)gcc
+CPP = $(CROSS_COMPILE)g++
+STRIP = $(CROSS_COMPILE)strip
+AR = $(CROSS_COMPILE)ar
 
 SRCDIRS     = . \
 			  ./pmp_file_parser \
