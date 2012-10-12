@@ -1,0 +1,38 @@
+4D 44 50 52 00 00 00 70 00 00 00 01 00 97 9C 2E 00 93 8A 4A 00 00 13 4E 00 00 10 A6 00 00 00 00 00 00 0C ED 00 02 4F 15 0C 56 69 64 65 6F 20 53 74 72 65 61 6D 14 76 69 64 65 6F 2F 78 2D 70 6E 2D 72 65 61 6C 76 69 64 65 6F            \(下面为init_data数据)
+00 00 00 22 00 00 00 22 56 49 44 4F 52 56 34 30 05 00 02 D0 00 0C 00 00 00 00 00 17 F9 DE 01 08 10 20 40 00 80 00
+
+1.	这是一段rmvb文件里的 Media Properties Header (“MDPR”)数据。
+2.	解码所需要的init_data就从这段数据的下面一部分得到的，并初使化下面的结构体：
+typedef struct rv_format_info_struct
+{
+    CDX_U32   ulLength;
+    CDX_U32   ulMOFTag;
+    CDX_U32   ulSubMOFTag;
+    CDX_U16   usWidth;
+    CDX_U16   usHeight;
+    CDX_U16   usBitCount;
+    CDX_U16   usPadWidth;
+CDX_U16   usPadHeight;
+//系统在处理时，这地方浪费两个字节。
+    CDX_U32   ufFramesPerSecond;
+    CDX_U32   ulOpaqueDataSize;
+    CDX_U8*   pOpaqueData;
+} rv_format_info;
+
+3.	保存的init_data数据：
+22 00 00 00 4F 44 49 56 30 34 56 52 00 05 D0 02 0C 00 00 00 00 00 00 00 DE F9 17 00 08 00 00 00 01 08 10 20 40 00 80 00
+其中：
+22 00 00 00 (ulLength) 
+4F 44 49 56(ulMOFTag)
+30 34 56 52(ulSubMOFTag) 
+00 05(usWidth)
+D0 02 (usHeight)
+0C 00(usBitCount)
+00 00 (usPadWidth)
+00 00(usPadHeight) 
+00 00(四位齐，多两个字节) 
+DE F9 17 00 (ufFramesPerSecond)
+08 00 00 00(ulOpaqueDataSize) 
+01 08 10 20 40 00 80 00(pOpaqueData)
+
+ulOpaqueDataSize是通过总的chunck大小减去26个字节(0x22 – 26 = 8)计算出来的。
