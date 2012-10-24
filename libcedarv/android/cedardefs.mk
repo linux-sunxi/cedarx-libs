@@ -1,5 +1,6 @@
 #
 # extra includes and libraries for cedarv
+# caution: libvecore and libcedarxalloc are shared libraries
 #
 
 CEDARINCLUDES = \
@@ -11,4 +12,7 @@ CEDARINCLUDES = \
         -I$(CEDARDIR)/libvecore \
         -I$(CEDARDIR)/vbv
 
-CEDARLIBS = -L$(CEDARDIR) -lcedarv -lvecore -lcedarxalloc
+CEDARLIBS = \
+	-L$(CEDARDIR) -lcedarv \
+	-L$(CEDARDIR)/libvecore -lvecore \
+	-L$(CEDARDIR)/adapter/cdxcalloc -lcedarxalloc
