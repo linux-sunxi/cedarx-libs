@@ -22,7 +22,7 @@
 
 #if PRINT_MODE == PRINT_MODE_SAVE_TO_FILE
 
-	
+
 	static char* log_buffer  		= NULL;
 	static int   log_cur_pos 		= 0;
 
@@ -30,8 +30,8 @@
 	static ES_FILE* log				= NULL;
 #else
 	static FILE* log				= NULL;
-#endif	
-	
+#endif
+
 #endif
 
 	#define LOG_BUFFER_MAX_LINE_SIZE	1024
@@ -44,17 +44,17 @@ int awprintf_init(void)
 	{
 		return -1;
 	}
-	
+
 #if (PRINT_MODE == PRINT_MODE_SAVE_TO_FILE)
 
 	log_buffer = (char*)mem_alloc(LOG_BUFFER_SIZE);
-	
+
 #ifdef MELIS
 	log = eLIBs_fopen(PRINT_FILE_PATH, "wb");
 #else
 	log = fopen(PRINT_FILE_PATH, "wb");
 #endif
-	
+
 	if(log_buffer == NULL || log == NULL)
 	{
 		if(log_buffer != NULL)
@@ -62,13 +62,13 @@ int awprintf_init(void)
 			mem_free(log_buffer);
 			log_buffer = NULL;
 		}
-		
+
 		if(log_line_buffer != NULL)
 		{
 			mem_free(log_line_buffer);
 			log_line_buffer = NULL;
 		}
-		
+
 		if(log != NULL)
 		{
 #ifdef MELIS
@@ -78,12 +78,12 @@ int awprintf_init(void)
 #endif
 			log = NULL;
 		}
-		
+
 		return -1;
 	}
-	
+
 	log_cur_pos = 0;
-	
+
 #endif
 
 	return 0;
@@ -96,7 +96,7 @@ void awprintf_exit(void)
 		mem_free(log_line_buffer);
 		log_line_buffer = NULL;
 	}
-	
+
 #if (PRINT_MODE == PRINT_MODE_SAVE_TO_FILE)
 
 	if(log_cur_pos > 0)
@@ -114,7 +114,7 @@ void awprintf_exit(void)
 		mem_free(log_buffer);
 		log_buffer = NULL;
 	}
-	
+
 	if(log != NULL)
 	{
 #ifdef MELIS
@@ -124,7 +124,7 @@ void awprintf_exit(void)
 #endif
 		log = NULL;
 	}
-	
+
 	log_cur_pos = 0;
 #endif
 
@@ -243,7 +243,7 @@ int awvprintf(const char* func, int line, va_list args)
 #if (PRINT_MODE == PRINT_MODE_USE_ANDROID_LOG)
 	LOGV("%s", log_line_buffer);
 #endif
-	
+
 #if (PRINT_MODE == PRINT_MODE_DIRECT)
 	#ifdef MELIS
 	eLIBs_printf("%s\n", log_line_buffer);
@@ -251,7 +251,7 @@ int awvprintf(const char* func, int line, va_list args)
 	printf("%s\n", log_line_buffer);
 	#endif
 #endif
-	
+
 #if (PRINT_MODE == PRINT_MODE_SAVE_TO_FILE)
 
 	src = log_line_buffer;
@@ -260,7 +260,7 @@ int awvprintf(const char* func, int line, va_list args)
 	while(*src)
 	{
 		*dst++ = *src++;
-		
+
 		log_cur_pos++;
 		if(log_cur_pos >= LOG_BUFFER_SIZE)
 		{
@@ -273,7 +273,7 @@ int awvprintf(const char* func, int line, va_list args)
 			dst = log_buffer;
 		}
     }
-	
+
 	*dst++ = '\n';
 	log_cur_pos++;
 	if(log_cur_pos >= LOG_BUFFER_SIZE)
@@ -286,9 +286,9 @@ int awvprintf(const char* func, int line, va_list args)
 		log_cur_pos = 0;
 		dst = log_buffer;
 	}
-	
+
 #endif
-	
-	return 0;    
+
+	return 0;
 }
 

@@ -16,7 +16,7 @@ typedef struct VIDEO_DECODER video_decoder_t;
 struct VIDEO_DECODER
 {
     cedarv_decoder_t icedarv;
-    
+
     Handle        	ve;
     u32				fbm_num;
     Handle        	fbm;
@@ -29,11 +29,11 @@ struct VIDEO_DECODER
     Handle			minor_vbv;
     vstream_data_t	cur_minor_stream_part;
 
-                  	
+
     s8            	display_already_begin;
     s8            	status;
     s8            	mode_switched;
-                  	
+
     vstream_info_t	stream_info;
     vconfig_t     	config_info;
     vstream_data_t	cur_stream_part;
@@ -41,7 +41,7 @@ struct VIDEO_DECODER
     u32           	max_vbv_buffer_size;
     s64				sys_time;
     u8              decinfTag[VDECODER_TAG_INF_SIZE];
-    u32				drop_b_frame; 
+    u32				drop_b_frame;
     s32             demuxType;
 
 };

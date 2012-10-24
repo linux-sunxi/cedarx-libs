@@ -5,22 +5,22 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     #include "libve_typedef.h"
-    
+
     //*         Display Time Window
     //* |<---window_width--->|<---window_width--->|
     //* |<--------------------------------------->|
     //*                      ^
     //*                  Frame PTS
-    #define DISPLAY_TIME_WINDOW_WIDTH   15      //* when current time fall in one picture's display time window,  this picture 
+    #define DISPLAY_TIME_WINDOW_WIDTH   15      //* when current time fall in one picture's display time window,  this picture
                                                 //* can be show, otherwise it maybe too early or too late to show this picture.
-                                   
+
     #define CEDARV_BVOP_DEC_LATE_THRESHOLD     60      	//* decode B-VOP time late threshold, if the later than this value, the B-VOP
                                                 		//* will be dropped without decoded.
     #define CEDARV_VOP_DEC_LATE_THRESHOLD      1000    	//* decode vop too late threshold, if the time of vop decode is later than this
                                                 		//* value, the no-key frames before next key frame will be dropped all.
-    
+
     typedef enum CEDARV_STREAM_FORMAT
     {
         CEDARV_STREAM_FORMAT_UNKNOW,
@@ -30,10 +30,10 @@ extern "C" {
         CEDARV_STREAM_FORMAT_H264,
         CEDARV_STREAM_FORMAT_VC1,
         CEDARV_STREAM_FORMAT_AVS,
-        CEDARV_STREAM_FORMAT_MJPEG,  
+        CEDARV_STREAM_FORMAT_MJPEG,
         CEDARV_STREAM_FORMAT_VP8
     }cedarv_stream_format_e;
-    
+
     typedef enum CEDARV_SUB_FORMAT
     {
         CEDARV_SUB_FORMAT_UNKNOW = 0,
@@ -50,7 +50,7 @@ extern "C" {
         CEDARV_MPEG4_SUB_FORMAT_WMV1,
         CEDARV_MPEG4_SUB_FORMAT_WMV2
     }cedarv_sub_format_e;
-    
+
     typedef enum CEDARV_CONTAINER_FORMAT
     {
     	CEDARV_CONTAINER_FORMAT_UNKNOW,
@@ -67,7 +67,7 @@ extern "C" {
     	CEDARV_CONTAINER_FORMAT_VOB,
     	CEDARV_CONTAINER_FORMAT_WEBM,
     }cedarv_container_format_e;
-      
+
     typedef enum CEDARX_3D_MODE
 	{
     	CDX_3D_MODE_NONE = 0,
@@ -119,22 +119,22 @@ extern "C" {
         cdx_3d_mode_e				output_3d_mode;
         cdx_anaglagh_e				anaglagh_type;
     }cedarv_stream_info_t;
-    
-    
+
+
     #define CEDARV_FLAG_PTS_VALID   		0x2
     #define CEDARV_FLAG_FIRST_PART  		0x8
     #define CEDARV_FLAG_LAST_PART   		0x10
 	#define CEDARV_FLAG_MPEG4_EMPTY_FRAME	0x20
     #define CEDARV_FLAG_DATA_INVALID 		0x80000000
-    
+
     typedef struct CEDARV_STREAM_DATA_INFORMATION
     {
         u32 flags;
         u32 lengh;
         u64 pts;
     }cedarv_stream_data_info_t;
-    
-    
+
+
     typedef enum CEDARV_PIXEL_FORMAT
     {
         CEDARV_PIXEL_FORMAT_1BPP       = 0x0,
@@ -157,12 +157,12 @@ extern "C" {
         CEDARV_PIXEL_FORMAT_AW_YUV422  = 0x11,
         CEDARV_PIXEL_FORMAT_AW_YUV411  = 0x12
     }cedarv_pixel_format_e;
-    
-        
+
+
     typedef struct CEDARV_PICTURE_INFORMATION
     {
         u32                     id;                     //* picture id assigned by outside, decoder do not use this field;
-                                
+
 		u32						width;					//* width of picture content;
 		u32						height;					//* height of picture content;
         u32                     top_offset;				//* display region top offset;
@@ -194,7 +194,7 @@ extern "C" {
         u32             		size_u;
         u32             		size_v;
         u32             		size_alpha;
-        
+
         u8*                     y;                      //* pixel data, it is interpreted based on pixel_format;
         u8*                     u;                      //* pixel data, it is interpreted based on pixel_format;
         u8*                     v;                      //* pixel data, it is interpreted based on pixel_format;
@@ -210,7 +210,7 @@ extern "C" {
         u8 *					v2;
         u8 *					alpha2;
     }cedarv_picture_t;
-    
+
     typedef enum CEDARV_RESULT
     {
         CEDARV_RESULT_OK                      = 0x0,      //* operation success;
@@ -218,15 +218,15 @@ extern "C" {
         CEDARV_RESULT_KEYFRAME_DECODED        = 0x3,      //* decode operation decodes one key frame;
         CEDARV_RESULT_NO_FRAME_BUFFER         = 0x4,      //* fail when try to get an empty frame buffer;
         CEDARV_RESULT_NO_BITSTREAM            = 0x5,      //* fail when try to get bitstream frame;
-        
+
         CEDARV_RESULT_ERR_FAIL                = -1,       //* operation fail;
         CEDARV_RESULT_ERR_INVALID_PARAM       = -2,       //* failure caused by invalid function parameter;
         CEDARV_RESULT_ERR_INVALID_STREAM      = -3,       //* failure caused by invalid video stream data;
         CEDARV_RESULT_ERR_NO_MEMORY           = -4,       //* failure caused by memory allocation fail;
         CEDARV_RESULT_ERR_UNSUPPORTED         = -5,       //* failure caused by not supported stream content;
     }cedarv_result_e;
-    
-    
+
+
     typedef enum CEDARV_STATUS
     {
         CEDARV_STATUS_STOP,
@@ -236,7 +236,7 @@ extern "C" {
         CEDARV_STATUS_BACKWARD,
         CEDARV_STATUS_PREVIEW
     }cedarv_status_e;
-    
+
     typedef enum CEDARV_IO_COMMAND
     {
         CEDARV_COMMAND_PLAY,
@@ -247,9 +247,9 @@ extern "C" {
         CEDARV_COMMAND_JUMP,
         CEDARV_COMMAND_ROTATE,
         CEDARV_COMMAND_SET_TOTALMEMSIZE,
-        
+
         //* for preview application.
-        CEDARV_COMMAND_PREVIEW_MODE,	//* aux = 0, pbuffer = NULL, 
+        CEDARV_COMMAND_PREVIEW_MODE,	//* aux = 0, pbuffer = NULL,
         								//* return value always CEDARV_RESULT_OK, should be called before the 'open' fuction.
         //reset vdeclib
         CEDARV_COMMAND_RESET,
@@ -260,21 +260,21 @@ extern "C" {
         CEDARV_COMMAND_SET_SEQUENCE_INFO,
         CEDARV_COMMAND_SET_ANAGLAGH_TYPE,
     }cedarv_io_cmd_e;
-    
-    
+
+
     typedef struct CEDARV_QUALITY
     {
         u32 vbv_buffer_usage;       //* persentage of the VBV buffer;
         u32 frame_num_in_vbv;       //* bitstream frame number in vbv;
     }cedarv_quality_t;
-    
+
     typedef enum CDX_DECODE_VIDEO_STREAM_TYPE
 	{
     	CDX_VIDEO_STREAM_MAJOR = 0,
     	CDX_VIDEO_STREAM_MINOR,
     	CDX_VIDEO_STREAM_NONE,
     }CDX_VIDEO_STREAM_TYPE;
-	
+
     typedef struct CEDARV_DECODER   cedarv_decoder_t;
     struct CEDARV_DECODER
     {
@@ -286,17 +286,17 @@ extern "C" {
         s32 (*ioctrl)(cedarv_decoder_t* p, u32 cmd, u32 param);
         s32 (*request_write)(cedarv_decoder_t*p, u32 require_size, u8** buf0, u32* size0, u8** buf1, u32* size1);
         s32 (*update_data)(cedarv_decoder_t* p, cedarv_stream_data_info_t* data_info);
-        
+
         s32 (*display_request)(cedarv_decoder_t* p, cedarv_picture_t* picture);
         s32 (*display_release)(cedarv_decoder_t* p, u32 frame_index);
         s32 (*set_vstream_info)(cedarv_decoder_t* p, cedarv_stream_info_t* info);
         s32 (*set_vbv_style)(cedarv_decoder_t *p, u32 vbvNum);
-        
+
         s32 (*query_quality)(cedarv_decoder_t* p, cedarv_quality_t* vq);
-        
+
         void (*release_frame_buffer_sem)(void* cookie);
         void (*free_vbs_buffer_sem)(void* cookie);
-        
+
         void *cedarx_cookie;
     };
 

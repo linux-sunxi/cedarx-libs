@@ -13,8 +13,8 @@ static s32 vdecoder_set_video_bitstream_info(cedarv_decoder_t* p, cedarv_stream_
 static s32 vdecoder_query_quality(cedarv_decoder_t* p, cedarv_quality_t* vq);
 
 static void set_format(vstream_info_t* vstream_info, cedarv_stream_info_t* cedarv_stream_info);
-static void vdecoder_set_vbv_vedec_memory(video_decoder_t* p);   
-        
+static void vdecoder_set_vbv_vedec_memory(video_decoder_t* p);
+
 extern void ve_init_clock(void);
 extern void ve_release_clock(void);
 
@@ -39,7 +39,7 @@ cedarv_decoder_t* libcedarv_init(s32* return_value)
     video_decoder_t* p;
 
     *return_value = CEDARV_RESULT_ERR_FAIL;
-    
+
     p = (video_decoder_t*)mem_alloc(sizeof(video_decoder_t));
     if (p == NULL)
     {
@@ -47,7 +47,7 @@ cedarv_decoder_t* libcedarv_init(s32* return_value)
         return NULL;
     }
     mem_set(p, 0, sizeof(video_decoder_t));
-    
+
     p->icedarv.open             = vdecoder_open;
     p->icedarv.close            = vdecoder_close;
     p->icedarv.decode           = vdecoder_decode;
@@ -58,15 +58,15 @@ cedarv_decoder_t* libcedarv_init(s32* return_value)
     p->icedarv.display_release  = vdecoder_display_release;
     p->icedarv.set_vstream_info = vdecoder_set_video_bitstream_info;
     p->icedarv.query_quality    = vdecoder_query_quality;
-    
+
     p->config_info.max_video_width  = MAX_SUPPORTED_VIDEO_WIDTH;
     p->config_info.max_video_height = MAX_SUPPORTED_VIDEO_HEIGHT;
 
     cedardev_init();
 	ve_init_clock();
-    
+
     *return_value = CEDARV_RESULT_OK;
-    
+
     return (cedarv_decoder_t*)p;
 }
 
@@ -76,7 +76,7 @@ s32 libcedarv_exit(cedarv_decoder_t* p)
 
     if(p == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     decoder = (video_decoder_t*)p;
 
     if(decoder->stream_info.init_data != NULL)
@@ -102,7 +102,7 @@ s32 libcedarv_exit(cedarv_decoder_t* p)
 
 	ve_release_clock();
 	cedardev_exit();
-    return CEDARV_RESULT_OK;    
+    return CEDARV_RESULT_OK;
 }
 
 
@@ -115,7 +115,7 @@ static s32 vdecoder_open(cedarv_decoder_t* p)
     decoder = (video_decoder_t*)p;
     if(decoder->stream_info.format == STREAM_FORMAT_UNKNOW)
         return CEDARV_RESULT_ERR_UNSUPPORTED;
-    
+
     if(decoder->status == CEDARV_STATUS_PREVIEW)
     {
     	decoder->vbv = vbv_init(BITSTREAM_BUF_SIZE_IN_PREVIEW_MODE, BITSTREAM_FRAME_NUM_IN_PREVIEW_MODE);
@@ -125,12 +125,12 @@ static s32 vdecoder_open(cedarv_decoder_t* p)
     	vdecoder_set_vbv_vedec_memory(decoder);
     	decoder->vbv = vbv_init(decoder->max_vbv_buffer_size, BITSTREAM_FRAME_NUM);
     }
-    
+
     if(decoder->vbv == NULL)
-    {   
+    {
         return CEDARV_RESULT_ERR_NO_MEMORY;
     }
-    
+
     decoder->ve = libve_open(&decoder->config_info, &decoder->stream_info, (void*)decoder);
     if(decoder->ve == NULL)
     {
@@ -151,27 +151,27 @@ static s32 vdecoder_open(cedarv_decoder_t* p)
 static s32 vdecoder_close(cedarv_decoder_t* p)
 {
     video_decoder_t* decoder;
-    
+
     if(p == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     decoder = (video_decoder_t*)p;
 
     libve_reset(0, decoder->ve);
-    
+
     if(decoder->stream_info.init_data != NULL)
     {
         mem_free(decoder->stream_info.init_data);
         decoder->stream_info.init_data = NULL;
     }
-    
+
     if(decoder->ve != NULL)
     {
         libve_close(0, decoder->ve);
         decoder->ve = NULL;
         decoder->fbm = NULL;
     }
-        
+
     if(decoder->vbv != NULL)
     {
         vbv_release(decoder->vbv);
@@ -197,28 +197,28 @@ static s32 vdecoder_decode(cedarv_decoder_t* p)
 #endif
 
     video_decoder_t* decoder;
-    
+
     if(p == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     decoder = (video_decoder_t*)p;
     if(decoder->mode_switched)
     {
     	libve_reset(0, decoder->ve);
-    	
+
         vbv_reset(decoder->vbv);
         if(p->free_vbs_buffer_sem != NULL)
             p->free_vbs_buffer_sem(p->cedarx_cookie);
-		
+
         if(decoder->fbm != NULL)
         {
 			fbm_flush(decoder->fbm);
             if(p->release_frame_buffer_sem != NULL)
                 p->release_frame_buffer_sem(p->cedarx_cookie);
         }
-        
+
     	decoder->mode_switched = 0;
-    	
+
     	return CEDARV_RESULT_NO_BITSTREAM;
     }
     if(decoder->status == CEDARV_STATUS_BACKWARD || decoder->status == CEDARV_STATUS_FORWARD)
@@ -236,7 +236,7 @@ static s32 vdecoder_decode(cedarv_decoder_t* p)
     		if(vbv_get_stream_num(decoder->vbv) < 2)
     			return CEDARV_RESULT_NO_BITSTREAM;
     	}
-    	
+
     	if(decoder->status == CEDARV_STATUS_PREVIEW)
     	{
     		vresult = libve_decode(1, 0, 0, decoder->ve);
@@ -252,7 +252,7 @@ static s32 vdecoder_decode(cedarv_decoder_t* p)
 #endif
     	}
     }
-    
+
     if(vresult == VRESULT_OK)
     {
         return CEDARV_RESULT_OK;
@@ -298,72 +298,72 @@ static s32 vdecoder_decode(cedarv_decoder_t* p)
 static s32 vdecoder_io_ctrl(cedarv_decoder_t* p, u32 cmd, u32 param)
 {
     video_decoder_t* decoder;
-    
+
     if(p == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     decoder = (video_decoder_t*)p;
-    
+
     if(p == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     switch(cmd)
     {
         case CEDARV_COMMAND_PLAY:
         {
             if(decoder->status != CEDARV_STATUS_PLAY && decoder->status != CEDARV_STATUS_STOP)
                 decoder->mode_switched = 1;
-                
+
             decoder->status = CEDARV_STATUS_PLAY;
-            
+
             return CEDARV_RESULT_OK;
         }
-    
+
         case CEDARV_COMMAND_FORWARD:
         {
             if(decoder->status != CEDARV_STATUS_PLAY)
                 return CEDARV_RESULT_ERR_FAIL;
-            
+
             decoder->status = CEDARV_STATUS_FORWARD;
             decoder->mode_switched = 1;
-            
+
             return CEDARV_RESULT_OK;
         }
-        
+
         case CEDARV_COMMAND_BACKWARD:
         {
             if(decoder->status != CEDARV_STATUS_PLAY)
                 return CEDARV_RESULT_ERR_FAIL;
-            
+
             decoder->status = CEDARV_STATUS_BACKWARD;
             decoder->mode_switched = 1;
-            
+
             return CEDARV_RESULT_OK;
         }
-        
+
         case CEDARV_COMMAND_STOP:
         {
             if(decoder->status != CEDARV_STATUS_PLAY && decoder->status != CEDARV_STATUS_FORWARD && decoder->status != CEDARV_STATUS_BACKWARD)
                 return CEDARV_RESULT_ERR_FAIL;
-            
+
             decoder->status = CEDARV_STATUS_STOP;
             decoder->mode_switched = 1;
-            
+
             return CEDARV_RESULT_OK;
         }
-            
+
         case CEDARV_COMMAND_ROTATE:
         {
             if(param > 5)
                 return CEDARV_RESULT_ERR_FAIL;
-            
+
             decoder->config_info.rotate_angle  = param;
             if(param != 0)
                 decoder->config_info.rotate_enable = 1;
-            
+
             return CEDARV_RESULT_OK;
         }
-        
+
         case CEDARV_COMMAND_JUMP:
         {
         	libve_reset(0, decoder->ve);
@@ -387,31 +387,31 @@ static s32 vdecoder_io_ctrl(cedarv_decoder_t* p, u32 cmd, u32 param)
 //        case VDEC_QUERY_VBSBUFFER_USAGE_CMD:
 //        {
 //            s32 usage1, usage2;
-//            
+//
 //            if(p->vbv != NULL && vbv_get_buffer_size(p->vbv) != 0)
 //            {
 //                usage1 = vbv_get_valid_data_size(p->vbv) * 100 / vbv_get_buffer_size(p->vbv);
 //                usage2 = vbv_get_valid_frame_num(p->vbv) * 100 / vbv_get_max_stream_frame_num(p->vbv);
-//                
+//
 //                return (usage1 > usage2) ? usage1 : usage2;
 //            }
-//            
+//
 //            return 0;
 //        }
-        
+
         case CEDARV_COMMAND_SET_TOTALMEMSIZE:
         {
             decoder->remainMemorySize = param;
             return CEDARV_RESULT_OK;
         }
-        
-		
+
+
 		case CEDARV_COMMAND_PREVIEW_MODE:
 		{
 			decoder->status = CEDARV_STATUS_PREVIEW;
 			return CEDARV_RESULT_OK;
 		}
-		
+
         default:
             return CEDARV_RESULT_ERR_FAIL;
     }
@@ -424,37 +424,37 @@ static s32 vdecoder_request_write(cedarv_decoder_t*p, u32 require_size, u8** buf
 	u32              free_size = 0;
 	u8*              vbv_end = NULL;
 	video_decoder_t* decoder = NULL;
-    
+
     if(p == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     decoder = (video_decoder_t*)p;
-    
+
     if(p == NULL || buf0 == NULL || buf1 == NULL || size0 == NULL || size1 == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-        
+
     *buf0  = NULL;
     *size0 = 0;
     *buf1  = NULL;
     *size1 = 0;
-    
+
     if(decoder->vbv == NULL)
     {
         return CEDARV_RESULT_ERR_FAIL;
     }
-        
+
     //* do not receive bitstream when decoding not started.
     if(decoder->status == CEDARV_STATUS_STOP)
     {
         return CEDARV_RESULT_ERR_FAIL;
     }
-        
+
     //* do not receive bitstream when swithing play mode.
    // if(decoder->mode_switched != 0)
    //{
    //    return CEDARV_RESULT_ERR_FAIL;
    // }
-        
+
     //* only receive one frame of bitstream when not in normal play mode.
     if(decoder->status == CEDARV_STATUS_FORWARD || decoder->status == CEDARV_STATUS_BACKWARD)
     {
@@ -463,32 +463,32 @@ static s32 vdecoder_request_write(cedarv_decoder_t*p, u32 require_size, u8** buf
             return CEDARV_RESULT_ERR_FAIL;
         }
     }
-    
+
 	if(require_size == 0)
 	{
 		require_size += 4;
 	}
-    
+
     if(vbv_request_buffer(&start, &free_size, require_size + decoder->cur_stream_part.length, decoder->vbv) != 0)
     {
         return CEDARV_RESULT_ERR_FAIL;
     }
-    
+
     if(free_size <= decoder->cur_stream_part.length)
     {
         return CEDARV_RESULT_ERR_FAIL;
     }
-    
+
     vbv_end  = vbv_get_base_addr(decoder->vbv) + vbv_get_buffer_size(decoder->vbv);
     start    = start + decoder->cur_stream_part.length;
-    
+
     if(start >= vbv_end)
     {
         start -= vbv_get_buffer_size(decoder->vbv);
     }
-    
+
     free_size -= decoder->cur_stream_part.length;
-    
+
 #if 1
 	//* give ring buffer.
     if((start + free_size) > vbv_end)
@@ -513,7 +513,7 @@ static s32 vdecoder_request_write(cedarv_decoder_t*p, u32 require_size, u8** buf
     *buf0 = start;
     *size0 = free_size;
 #endif
-    
+
     return 0;
 }
 
@@ -523,18 +523,18 @@ static s32 vdecoder_update_data(cedarv_decoder_t* p, cedarv_stream_data_info_t* 
 	Handle           vbv = NULL;
 	vstream_data_t*  stream= NULL;
 	video_decoder_t* decoder = NULL;
-    
+
     if(p == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     decoder = (video_decoder_t*)p;
-    
+
     if(data_info == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     vbv    = decoder->vbv;
     stream = &decoder->cur_stream_part;
-     
+
     if(data_info->flags & CEDARV_FLAG_FIRST_PART)
     {
         if(stream->length != 0)
@@ -542,7 +542,7 @@ static s32 vdecoder_update_data(cedarv_decoder_t* p, cedarv_stream_data_info_t* 
             stream->valid = 0;
             vbv_add_stream(stream, vbv);
         }
-        
+
         stream->data   = vbv_get_current_write_addr(vbv);
         stream->length = data_info->lengh;
         if(data_info->flags & CEDARV_FLAG_PTS_VALID)
@@ -558,9 +558,9 @@ static s32 vdecoder_update_data(cedarv_decoder_t* p, cedarv_stream_data_info_t* 
     {
         stream->length += data_info->lengh;
     }
-    
+
     if(data_info->flags & CEDARV_FLAG_LAST_PART)
-    {   
+    {
     	if(data_info->flags & CEDARV_FLAG_DATA_INVALID)
     	{
         	stream->valid = 0;
@@ -606,23 +606,23 @@ static s32 vdeocder_display_request(cedarv_decoder_t* p, cedarv_picture_t* pictu
 
 	vpicture_t*      frame = NULL;
 	video_decoder_t* decoder = NULL;
-    
+
     if(p == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     decoder = (video_decoder_t*)p;
-    
+
     if(decoder->fbm == NULL)
     {
         if(decoder->ve == NULL)
             return CEDARV_RESULT_ERR_FAIL;
-        
+
         decoder->fbm = libve_get_fbm(decoder->ve);
-        
+
         if(decoder->fbm == NULL)
             return CEDARV_RESULT_ERR_FAIL;
     }
-    
+
     if(decoder->status == CEDARV_STATUS_PREVIEW)
     	frame = fbm_display_request_frame(decoder->fbm);
     else
@@ -631,7 +631,7 @@ static s32 vdeocder_display_request(cedarv_decoder_t* p, cedarv_picture_t* pictu
 	    frame = fbm_display_request_frame(decoder->fbm);
 #else
 	    if(decoder->display_already_begin == 1)
-	    {    
+	    {
 get_frame_again:
 	        frame = fbm_display_pick_frame(decoder->fbm);
 	        if(frame != NULL)
@@ -639,7 +639,7 @@ get_frame_again:
 	            if(frame->pts != (u64)(-1))
 	            {
 	                video_time = esMODS_MIoctrl(vdrv_com->avsync, DRV_AVS_CMD_GET_VID_TIME, DRV_AVS_TIME_TOTAL, 0); //* get system time.
-	                
+
 	                if(decoder->status == CEDARV_STATUS_BACKWARD)
 	                {
 	                    if(video_time > (frame->pts/1000) + DISPLAY_TIME_WINDOW_WIDTH)
@@ -650,9 +650,9 @@ get_frame_again:
 	                    if(video_time + DISPLAY_TIME_WINDOW_WIDTH < (frame->pts/1000))
 	                        return -1;  //* too early to display.
 	                }
-	                
+
 	                frame = fbm_display_request_frame(decoder->fbm);
-	                
+
 	                if(decoder->status == CEDARV_STATUS_PLAY)
 	                {
 	                	if((frame->pts/1000) + DISPLAY_TIME_WINDOW_WIDTH < video_time)
@@ -679,11 +679,11 @@ get_frame_again:
 	    }
 #endif
     }
-    
+
 
     if(frame == NULL)
         return CEDARV_RESULT_ERR_FAIL;
-    
+
     picture->id                     = frame->id;
     picture->width                  = frame->width;
     picture->height                 = frame->height;
@@ -705,14 +705,14 @@ get_frame_again:
     picture->size_y					= frame->size_y;
     picture->size_u					= frame->size_u;
     picture->size_v					= frame->size_v;
-    
+
     if(frame->pixel_format == PIXEL_FORMAT_AW_YUV422)
     	picture->pixel_format = CEDARV_PIXEL_FORMAT_AW_YUV422;
     else if(frame->pixel_format == PIXEL_FORMAT_AW_YUV411)
     	picture->pixel_format = CEDARV_PIXEL_FORMAT_AW_YUV411;
     else
     	picture->pixel_format = CEDARV_PIXEL_FORMAT_AW_YUV420;
-    	
+
     picture->pts                    = frame->pts;
     picture->pcr                    = frame->pcr;
 
@@ -721,7 +721,7 @@ get_frame_again:
 
     picture->v                      = NULL;
     picture->alpha                  = NULL;
-    
+
     if(decoder->display_already_begin == 0)
         decoder->display_already_begin = 1;
 
@@ -733,23 +733,23 @@ static s32 vdecoder_display_release(cedarv_decoder_t* p, u32 frame_index)
 {
     vpicture_t*      frame;
     video_decoder_t* decoder;
-    
+
     if(p == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
     decoder = (video_decoder_t*)p;
-    
+
     if(decoder == NULL || decoder->fbm == NULL)
         return CEDARV_RESULT_ERR_FAIL;
-    
+
     frame = fbm_index_to_pointer(frame_index, decoder->fbm);
     if(frame == NULL)
         return CEDARV_RESULT_ERR_FAIL;
-    
+
     fbm_display_return_frame(frame, decoder->fbm);
     if(p->release_frame_buffer_sem != NULL)
         p->release_frame_buffer_sem(p->cedarx_cookie);
-    
+
     return CEDARV_RESULT_OK;
 }
 
@@ -757,17 +757,17 @@ static s32 vdecoder_display_release(cedarv_decoder_t* p, u32 frame_index)
 static s32 vdecoder_set_video_bitstream_info(cedarv_decoder_t* p, cedarv_stream_info_t* info)
 {
     video_decoder_t*      decoder;
-    
+
     decoder = (video_decoder_t*)p;
-    
+
     if(p == NULL || info == NULL)
     {
         return CEDARV_RESULT_ERR_INVALID_PARAM;
     }
-    
-    
+
+
     set_format(&decoder->stream_info, info);
-    
+
     decoder->stream_info.video_width      = info->video_width;
     decoder->stream_info.video_height     = info->video_height;
     decoder->stream_info.frame_rate       = info->frame_rate;
@@ -783,12 +783,12 @@ static s32 vdecoder_set_video_bitstream_info(cedarv_decoder_t* p, cedarv_stream_
     	{
         	return CEDARV_RESULT_ERR_NO_MEMORY;
         }
-    
+
     	mem_cpy(decoder->stream_info.init_data, info->init_data, decoder->stream_info.init_data_len);
     }
     else
     	decoder->stream_info.init_data = NULL;
-    
+
     return CEDARV_RESULT_OK;
 }
 
@@ -796,15 +796,15 @@ static s32 vdecoder_set_video_bitstream_info(cedarv_decoder_t* p, cedarv_stream_
 static s32 vdecoder_query_quality(cedarv_decoder_t* p, cedarv_quality_t* vq)
 {
     video_decoder_t*      decoder;
-    
+
     decoder = (video_decoder_t*)p;
-    
+
     if(p == NULL || vq == NULL)
         return CEDARV_RESULT_ERR_INVALID_PARAM;
-    
+
 	vq->vbv_buffer_usage = vbv_get_valid_data_size(decoder->vbv) * 100 / vbv_get_buffer_size(decoder->vbv);
     vq->frame_num_in_vbv = vbv_get_valid_frame_num(decoder->vbv);
-	
+
 	return CEDARV_RESULT_OK;
 }
 
@@ -847,8 +847,8 @@ static void set_format(vstream_info_t* vstream_info, cedarv_stream_info_t* cedar
 	{
 		vstream_info->format = STREAM_FORMAT_UNKNOW;
 	}
-	
-	
+
+
 	if(cedarv_stream_info->sub_format == CEDARV_SUB_FORMAT_UNKNOW)
 	{
 		vstream_info->sub_format = STREAM_SUB_FORMAT_UNKNOW;
@@ -905,7 +905,7 @@ static void set_format(vstream_info_t* vstream_info, cedarv_stream_info_t* cedar
 	{
 		vstream_info->sub_format = STREAM_SUB_FORMAT_UNKNOW;
 	}
-	
+
 	if(cedarv_stream_info->container_format == CEDARV_CONTAINER_FORMAT_UNKNOW)
 	{
 		vstream_info->container_format = CONTAINER_FORMAT_UNKNOW;
@@ -958,7 +958,7 @@ static void set_format(vstream_info_t* vstream_info, cedarv_stream_info_t* cedar
 	{
 		vstream_info->container_format = CONTAINER_FORMAT_UNKNOW;
 	}
-	
+
 	return;
 }
 

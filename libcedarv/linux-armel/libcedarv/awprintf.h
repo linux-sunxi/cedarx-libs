@@ -48,7 +48,7 @@ int  awvprintf(const char* func, int line, va_list args);
 					if (switch == 1)								\
 						awprintf(__func__, __LINE__, __VA_ARGS__);	\
 				}while(0)
-			
+
 #define     AwVLogX(switch, func, line, args)						\
 				do													\
 				{													\
@@ -61,11 +61,11 @@ int  awvprintf(const char* func, int line, va_list args);
     #define LOGLEVEL0					(0)
     #define LOGLEVEL1					(0)
     #define LOGLEVEL2					(0)
-    
+
     #define L0							LOGLEVEL0
     #define L1							LOGLEVEL1
     #define L2							LOGLEVEL2
-    
+
     #define LogOpen						AwLogOpen
     #define LogClose					AwLogClose
 	#define Log							AwLog

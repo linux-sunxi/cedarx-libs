@@ -36,7 +36,7 @@ typedef struct VBV_MANAGER
     u8*             write_addr;
     u32             valid_size;
     u32             max_size;
-    
+
     stream_fifo_t   frame_fifo;
     stream_queue_t  frame_queue;
 
@@ -55,7 +55,7 @@ Handle vbv_init(u32 vbv_size, u32 max_frame_num)
     u32    i;
     u8*    vbv_buf;
     vbv_t* vbv;
-    
+
     if(vbv_size == 0 || max_frame_num == 0)
         return NULL;
     vbv_buf = (u8*)mem_palloc(vbv_size, 1024);
@@ -76,13 +76,13 @@ Handle vbv_init(u32 vbv_size, u32 max_frame_num)
         mem_pfree(vbv_buf);
         return NULL;
     }
-    
+
     mem_set(vbv->frame_fifo.in_frames, 0, max_frame_num*sizeof(stream_frame_t));
     for(i=0; i<max_frame_num; i++)
     {
         vbv->frame_fifo.in_frames[i].id = i;
     }
-    
+
     vbv->mutex = semaphore_create(1);
     if (vbv->mutex == NULL)
     {
@@ -102,10 +102,10 @@ Handle vbv_init(u32 vbv_size, u32 max_frame_num)
     vbv->frame_fifo.read_index    = 0;
     vbv->frame_fifo.write_index   = 0;
     vbv->frame_fifo.max_frame_num = max_frame_num;
-    
+
     vbv->frame_queue.frame_num = 0;
     vbv->frame_queue.head      = NULL;
-    
+
     return (Handle)vbv;
 }
 
@@ -113,7 +113,7 @@ Handle vbv_init(u32 vbv_size, u32 max_frame_num)
 void vbv_release(Handle vbv)
 {
     vbv_t* v;
-    
+
     v = (vbv_t*)vbv;
     if (v)
     {
@@ -138,14 +138,14 @@ void vbv_release(Handle vbv)
         mem_free(v);
     }
 
-    return;	
+    return;
 }
 
 s32 vbv_request_buffer(u8** buf, u32* buf_size, u32 require_size, Handle vbv)
 {
     vbv_t* v;
     u32    free_size;
-    
+
     v = (vbv_t*)vbv;
 
     if (v == NULL || buf == NULL || buf_size == NULL)
@@ -197,7 +197,7 @@ s32 vbv_add_stream(vstream_data_t* stream, Handle vbv)
     u32    write_index;
     u8*    new_write_addr;
     vbv_t* v;
-    
+
     v = (vbv_t*)vbv;
 
     if (stream == NULL || v == NULL)
@@ -249,11 +249,11 @@ s32 vbv_add_stream(vstream_data_t* stream, Handle vbv)
 
 vstream_data_t* vbv_request_stream_frame(Handle vbv)
 {
-    stream_frame_t* frame;    
+    stream_frame_t* frame;
     vbv_t*          v;
-    
+
     v = (vbv_t*)vbv;
-    
+
     if (v == NULL)
     {
         return NULL;
@@ -265,7 +265,7 @@ vstream_data_t* vbv_request_stream_frame(Handle vbv)
     }
 
     frame = dequeue(&v->frame_queue);
-    
+
     if(frame == NULL)
     {
         unlock(v);
@@ -284,7 +284,7 @@ void vbv_return_stream_frame(vstream_data_t* stream, Handle vbv)
     vbv_t* v;
     s32 delta;
     u32 frame_num;
-    
+
     v = (vbv_t*)vbv;
 
     if (v == NULL)
@@ -321,7 +321,7 @@ void vbv_flush_stream_frame(vstream_data_t* stream, Handle vbv)
 {
     u32    read_index;
     vbv_t* v;
-    
+
     v = (vbv_t*)vbv;
 
     if (v == NULL)
@@ -346,7 +346,7 @@ void vbv_flush_stream_frame(vstream_data_t* stream, Handle vbv)
         unlock(v);
         return;
     }
-    
+
     read_index++;
     if (read_index == v->frame_fifo.max_frame_num)
     {
@@ -363,7 +363,7 @@ void vbv_flush_stream_frame(vstream_data_t* stream, Handle vbv)
     }
 
     unlock(v);
-    
+
     return;
 }
 
@@ -371,7 +371,7 @@ void vbv_flush_stream_frame(vstream_data_t* stream, Handle vbv)
 u32 vbv_get_stream_num(Handle vbv)
 {
     vbv_t* v = (vbv_t*)vbv;
-    
+
     if (v == NULL)
     {
         return 0;
@@ -383,7 +383,7 @@ u32 vbv_get_stream_num(Handle vbv)
 u8* vbv_get_base_addr(Handle vbv)
 {
     vbv_t* v = (vbv_t*)vbv;
-    
+
     if (v == NULL)
     {
         return NULL;
@@ -391,25 +391,25 @@ u8* vbv_get_base_addr(Handle vbv)
 
     return v->vbv_buf;
 }
-    
+
 
 u32 vbv_get_buffer_size(Handle vbv)
 {
     vbv_t* v = (vbv_t*)vbv;
-    
+
     if(v == NULL)
     {
         return 0;
     }
-    
+
     return v->max_size;
 }
- 
-    
+
+
 void vbv_reset(Handle vbv)
 {
     vbv_t* v = (vbv_t*)vbv;
-    
+
     if (v == NULL)
     {
         return;
@@ -436,12 +436,12 @@ void vbv_reset(Handle vbv)
 u8* vbv_get_current_write_addr(Handle vbv)
 {
     vbv_t* v = (vbv_t*)vbv;
-    
+
     if (v == NULL)
     {
         return NULL;
     }
-    
+
     return v->write_addr;
 }
 
@@ -449,36 +449,36 @@ u8* vbv_get_current_write_addr(Handle vbv)
 u32 vbv_get_valid_data_size(Handle vbv)
 {
     vbv_t* v = (vbv_t*)vbv;
-    
+
     if (v == NULL)
     {
         return 0;
     }
-    
+
     return v->valid_size;
 }
 
 u32 vbv_get_valid_frame_num(Handle vbv)
 {
     vbv_t* v = (vbv_t*)vbv;
-    
+
     if (v == NULL)
     {
         return 0;
     }
-    
+
     return v->frame_fifo.frame_num;
 }
-    
+
 u32 vbv_get_max_stream_frame_num(Handle vbv)
 {
     vbv_t* v = (vbv_t*)vbv;
-    
+
     if (v == NULL)
     {
         return 0;
     }
-    
+
     return v->frame_fifo.max_frame_num;
 }
 
@@ -519,9 +519,9 @@ static void enqueue_to_head(stream_frame_t* stream, stream_queue_t* q)
 static void enqueue_to_tail(stream_frame_t* stream, stream_queue_t* q)
 {
     stream_frame_t* node;
-    
+
     node = q->head;
-    
+
     if(node == NULL)
     {
         q->head = stream;
@@ -533,7 +533,7 @@ static void enqueue_to_tail(stream_frame_t* stream, stream_queue_t* q)
     {
         while(node->next != NULL)
             node = node->next;
-        
+
         node->next = stream;
         stream->next = NULL;
         q->frame_num++;
@@ -545,15 +545,15 @@ static void enqueue_to_tail(stream_frame_t* stream, stream_queue_t* q)
 static stream_frame_t* dequeue(stream_queue_t* q)
 {
     stream_frame_t* node;
-    
+
     if(q->frame_num == 0)
         return NULL;
-    
+
     node = q->head;
     q->head = q->head->next;
     node->next = NULL;
     q->frame_num--;
-    
+
     return node;
 }
 

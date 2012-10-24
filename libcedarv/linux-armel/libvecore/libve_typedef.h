@@ -10,13 +10,13 @@ extern "C" {
     //*************** Basic type definition. ****************//
     //*******************************************************//
     #ifndef u8
-        typedef unsigned char u8;    
+        typedef unsigned char u8;
     #endif
     #ifndef u16
-        typedef unsigned short u16;    
+        typedef unsigned short u16;
     #endif
     #ifndef u32
-        typedef unsigned int u32;    
+        typedef unsigned int u32;
     #endif
     #ifndef u64
         #ifdef COMPILER_ARMCC
@@ -26,13 +26,13 @@ extern "C" {
         #endif
     #endif
     #ifndef s8
-        typedef signed char s8;    
+        typedef signed char s8;
     #endif
     #ifndef s16
-        typedef signed short s16;    
+        typedef signed short s16;
     #endif
     #ifndef s32
-        typedef signed int s32;    
+        typedef signed int s32;
     #endif
     #ifndef s64
         #ifdef COMPILER_ARMCC
@@ -47,7 +47,7 @@ extern "C" {
     #ifndef NULL
         #define NULL ((void*)0)
     #endif
-    
+
     //*******************************************************//
     //************ Define Stream Coding Formats. ************//
     //*******************************************************//
@@ -63,7 +63,7 @@ extern "C" {
         STREAM_FORMAT_MJPEG,
         STREAM_FORMAT_VP8
     }stream_format_e;
-    
+
     typedef enum STREAM_SUB_FORMAT
     {
         STREAM_SUB_FORMAT_UNKNOW = 0,
@@ -82,7 +82,7 @@ extern "C" {
         MPEG4_SUB_FORMAT_DIVX2,		//MSMPEGV2
         MPEG4_SUB_FORMAT_DIVX1		//MSMPEGV1
     }stream_sub_format_e;
-    
+
     typedef enum CONTAINER_FORMAT
     {
     	CONTAINER_FORMAT_UNKNOW,
@@ -127,7 +127,7 @@ extern "C" {
         PIXEL_FORMAT_AW_YUV422	= 0x11,
         PIXEL_FORMAT_AW_YUV411  = 0x12
     }pixel_format_e;
-    
+
 
 	//*******************************************************//
 	//************** Define DRAM Memory Type. ***************//
@@ -190,11 +190,11 @@ extern "C" {
         u32             		left_offset;			//* display region left offset;
         u32             		display_width;			//* display region width;
         u32             		display_height;			//* display region height;
-        
+
         u8              		rotate_angle;           //* how this picture has been rotated, 0: no rotate, 1: 90 degree (clock wise), 2: 180, 3: 270, 4: horizon flip, 5: vertical flig;
         u8              		horizontal_scale_ratio; //* what ratio this picture has been scaled down at horizon size, 0: 1/1, 1: 1/2, 2: 1/4, 3: 1/8;
         u8              		vertical_scale_ratio;   //* what ratio this picture has been scaled down at vetical size, 0: 1/1, 1: 1/2, 2: 1/4, 3: 1/8;
-        
+
         u32             		frame_rate;             //* frame_rate, multiplied by 1000;
         u32             		aspect_ratio;           //* pixel width to pixel height ratio, multiplied by 1000;
         u32                     pict_prop;              //* picture property flags

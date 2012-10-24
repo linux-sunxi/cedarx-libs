@@ -15,8 +15,8 @@ extern "C" {
     typedef s32         (*VE_WAIT_INTR)(void);
     typedef u32         (*VE_GET_REG_BASE_ADDR)(void);
     typedef memtype_e   (*VE_GET_MEMTYPE)(void);
-    
-    
+
+
     //* define function prototype for system functions.
     typedef void* (*MEM_ALLOC)(u32 size);
     typedef void  (*MEM_FREE)(void* p);
@@ -37,15 +37,15 @@ extern "C" {
     typedef vpicture_t* (*FBM_REQUEST_FRAME)(Handle h);
     typedef void        (*FBM_RETURN_FRAME)(vpicture_t* frame, u8 valid, Handle h);
     typedef void        (*FBM_SHARE_FRAME)(vpicture_t* frame, Handle h);
-    
-    
+
+
     //* define function prototype for VBV bitstream manage opearation.
     typedef vstream_data_t* (*VBV_REQUEST_BITSTREAM_FRAME)(Handle vbv);
     typedef void            (*VBV_RETURN_BITSTREAM_FRAME)(vstream_data_t* stream, Handle vbv);
     typedef void            (*VBV_FLUSH_BITSTREAM_FRAME)(vstream_data_t* vstream, Handle vbv);
     typedef u8*             (*VBV_GET_BASE_ADDR)(Handle vbv);
     typedef u32             (*VBV_GET_SIZE)(Handle vbv);
-    
+
 
     //*******************************************************//
     //********** Functions for VE Controlling. **************//
@@ -59,8 +59,8 @@ extern "C" {
         VE_GET_REG_BASE_ADDR ve_get_reg_base_addr; //* return the address of the first VE register;
         VE_GET_MEMTYPE       ve_get_memtype;       //* return the dram memory type, such as DDR-1-32bits, DDR-2-16bits, DDR-2-32bits;
     }IVEControl_t;
-    
-    
+
+
     //*******************************************************//
     //******* Functions for OS dependent operations. ********//
     //*******************************************************//
@@ -71,19 +71,19 @@ extern "C" {
         MEM_FREE            mem_free;
         MEM_PALLOC          mem_palloc;
         MEM_PFREE           mem_pfree;
-        
+
         //* Memory operations.
         MEM_SET             mem_set;
         MEM_CPY             mem_cpy;
         MEM_FLUSH_CACHE     mem_flush_cache;
         MEM_GET_PHY_ADDR    mem_get_phy_addr;
-        
+
         //* Misc functions.
         SYS_PRINT           sys_print;
         SYS_SLEEP           sys_sleep;
     }IOS_t;
-    
-    
+
+
     //*******************************************************//
     //****** Functions for Frame Buffer Controlling. ********//
     //*******************************************************//
@@ -96,8 +96,8 @@ extern "C" {
         FBM_SHARE_FRAME   fbm_share_frame;    //* decoder using the frame, but this frame should display now.
         FBM_INIT_EX		  fbm_init_ex;		  //*
     }IFBM_t;
-    
-    
+
+
     //*******************************************************//
     //********** Functions for VBV Controlling. *************//
     //*******************************************************//
@@ -107,7 +107,7 @@ extern "C" {
         VBV_RETURN_BITSTREAM_FRAME  vbv_return_bitstream_frame;
         VBV_FLUSH_BITSTREAM_FRAME   vbv_flush_bitstream_frame;
         VBV_GET_BASE_ADDR           vbv_get_base_addr;
-        VBV_GET_SIZE                vbv_get_size;        
+        VBV_GET_SIZE                vbv_get_size;
     }IVBV_t;
 
 

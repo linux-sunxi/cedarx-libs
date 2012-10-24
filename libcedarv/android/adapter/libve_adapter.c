@@ -20,7 +20,7 @@
 //****************************************************************************//
 //************************ Instance of FBM Interface *************************//
 //****************************************************************************//
-IFBM_t IFBM = 
+IFBM_t IFBM =
 {
     fbm_init,
     fbm_release,
@@ -41,7 +41,7 @@ static void flush_stream_frame(vstream_data_t* stream, Handle vbv)
     libcedarv_free_vbs_buffer_sem();
 }
 
-IVBV_t IVBV = 
+IVBV_t IVBV =
 {
     vbv_request_stream_frame,
     vbv_return_stream_frame,
@@ -54,14 +54,14 @@ IVBV_t IVBV =
 //****************************************************************************//
 //************************ Instance of OS Interface **************************//
 //****************************************************************************//
-IOS_t IOS = 
+IOS_t IOS =
 {
     //* Heap operation.
     mem_alloc,
     mem_free,
     mem_palloc,
     mem_pfree,
-    
+
     //* Memory operation.
     mem_set,
     mem_cpy,
@@ -126,7 +126,7 @@ s32 cedardev_init(void)
 
 	//* open CedarX memory manage library.
 	cdxalloc_open();
-	
+
 	cedarv_request_ve_core();
 
 	return 0;
@@ -160,7 +160,7 @@ static s32       ve_wait_intr(void);
 static u32       ve_get_reg_base_addr(void);
 static memtype_e ve_get_memtype(void);
 
-IVEControl_t IVE = 
+IVEControl_t IVE =
 {
     ve_reset_hardware,
     ve_enable_clock,

@@ -18,7 +18,7 @@ extern "C" {
         VRESULT_KEYFRAME_DECODED        = 0x3,      //* decode operation decodes one key frame;
         VRESULT_NO_FRAME_BUFFER         = 0x4,      //* fail when try to get an empty frame buffer;
         VRESULT_NO_BITSTREAM            = 0x5,      //* fail when try to get bitstream frame;
-        
+
         VRESULT_ERR_FAIL                = -1,       //* operation fail;
         VRESULT_ERR_INVALID_PARAM       = -2,       //* failure caused by invalid function parameter;
         VRESULT_ERR_INVALID_STREAM      = -3,       //* failure caused by invalid video stream data;
@@ -77,7 +77,7 @@ extern "C" {
         _3d_mode_e			output_3d_mode;
         _anaglagh_e			anaglagh_type;
     }vstream_info_t;
-    
+
 
     //*******************************************************//
     //**************** Define BSP Operations. ***************//
@@ -87,9 +87,9 @@ extern "C" {
     vresult_e libve_close(u8 flush_pictures, Handle libve);
 
     vresult_e libve_reset(u8 flush_pictures, Handle libve);
-    
+
     vresult_e libve_flush(u8 flush_pictures);
-    
+
 
     vresult_e libve_set_vbv(Handle vbv, Handle libve);
     vresult_e libve_set_minor_vbv(Handle vbv_minor, Handle libve);

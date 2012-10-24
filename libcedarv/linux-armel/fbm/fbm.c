@@ -33,9 +33,9 @@ void print_fbm_status(Handle h)
 
 #if 0
 	LOGV("  empty queue:\n");
-    
+
 	p = fbm->empty_queue;
-    
+
 	while(p)
 	{
 		LOGV("    frame %d, status = %s.\n", p->picture.id, status_string[p->status]);
@@ -71,7 +71,7 @@ static s32 fbm_alloc_frame_buffer(vpicture_t* picture)
     picture->u 	   = NULL;
     picture->v 	   = NULL;
     picture->alpha = NULL;
-    
+
     picture->y2	   	 = NULL;
     picture->v2	  	 = NULL;
     picture->u2	  	 = NULL;
@@ -85,7 +85,7 @@ static s32 fbm_alloc_frame_buffer(vpicture_t* picture)
  			goto _exit;
 
  	}
-    
+
  	if(picture->size_u != 0)
  	{
  		picture->u = (u8*)mem_palloc(picture->size_u, 1024);
@@ -94,7 +94,7 @@ static s32 fbm_alloc_frame_buffer(vpicture_t* picture)
  			goto _exit;
  		}
  	}
-    
+
  	if(picture->size_v != 0)
  	{
  		picture->v = (u8*)mem_palloc(picture->size_v, 1024);
@@ -138,51 +138,51 @@ _exit:
 }
 
 s32 fbm_free_redBlue_frame_buffer(Handle h)
-{   
+{
     u32 i = 0;
     fbm_t* 		  fbm = NULL;
     vpicture_t*   picture = NULL;
 
     fbm = (fbm_t*)h;
-    
+
     if (lock(fbm) != 0)
     {
         return -1;
     }
     for(i=0; i<fbm->max_frame_num; i++)
- 	{   
+ 	{
         picture = &fbm->frames[i].picture;
         if(picture->y2 != NULL)
 	    {
  		    mem_pfree(picture->y2);
  		    picture->y2 = NULL;
  	    }
-	
+
  	    if(picture->u2 != NULL)
 	    {
  		    mem_pfree(picture->u2);
  		    picture->u2 = NULL;
  	    }
-	
+
  	    if(picture->v2 != NULL)
 	    {
  		    mem_pfree(picture->v2);
  		    picture->v2 = NULL;
  	    }
-	
+
  	    if(picture->alpha2 != NULL)
 	    {
  		    mem_pfree(picture->alpha2);
  		    picture->alpha2 = NULL;
  	    }
     }
-   unlock(fbm);  
+   unlock(fbm);
    return 0;
 }
 
 
 s32 fbm_alloc_redBlue_frame_buffer(Handle h)
-{   
+{
     s32     	  i = 0;
     fbm_t* 		  fbm = NULL;
     vpicture_t*   picture = NULL;
@@ -202,11 +202,11 @@ s32 fbm_alloc_redBlue_frame_buffer(Handle h)
         unlock(fbm);
         return 0;
     }
-    
+
     for(i=0; i<(s32)fbm->max_frame_num; i++)
-    {   
+    {
         picture = &fbm->frames[i].picture;
-        
+
         if(picture->size_y2)
         {
  		    picture->y2 = (u8 *)mem_palloc(picture->size_y2, 1024);
@@ -214,7 +214,7 @@ s32 fbm_alloc_redBlue_frame_buffer(Handle h)
             {
  			   break;
  		    }
-            
+
  	    }
  	    if(picture->size_u2)
         {
@@ -241,14 +241,14 @@ s32 fbm_alloc_redBlue_frame_buffer(Handle h)
  		    }
  	    }
    }
-    
+
    if(i <(s32)fbm->max_frame_num)
-   {      
+   {
         unlock(fbm);
         fbm_free_redBlue_frame_buffer(h);
         return -1;
    }
-   unlock(fbm);  
+   unlock(fbm);
    return 0;
 }
 
@@ -261,43 +261,43 @@ static s32 fbm_free_frame_buffer(vpicture_t* picture)
  		mem_pfree(picture->y);
  		picture->y = NULL;
  	}
- 	
+
  	if(picture->u != NULL)
  	{
  		mem_pfree(picture->u);
  		picture->u = NULL;
  	}
- 	
+
  	if(picture->v != NULL)
  	{
  		mem_pfree(picture->v);
  		picture->v = NULL;
  	}
- 	
+
  	if(picture->alpha != NULL)
  	{
  		mem_pfree(picture->alpha);
  		picture->alpha = NULL;
 	}
-	
+
  	if(picture->y2 != NULL)
 	{
  		mem_pfree(picture->y2);
  		picture->y2 = NULL;
  	}
-	
+
  	if(picture->u2 != NULL)
 	{
  		mem_pfree(picture->u2);
  		picture->u2 = NULL;
  	}
-	
+
  	if(picture->v2 != NULL)
 	{
  		mem_pfree(picture->v2);
  		picture->v2 = NULL;
  	}
-	
+
  	if(picture->alpha2 != NULL)
 	{
  		mem_pfree(picture->alpha2);
@@ -308,7 +308,7 @@ static s32 fbm_free_frame_buffer(vpicture_t* picture)
 
 
 Handle fbm_init_ex(u32 max_frame_num,
-                u32 min_frame_num, 
+                u32 min_frame_num,
                 u32 size_y[2],
                 u32 size_u[2],
                 u32 size_v[2],
@@ -328,7 +328,7 @@ Handle fbm_init_ex(u32 max_frame_num,
     }
 	if(min_frame_num > FBM_MAX_FRAME_NUM)
 		return NULL;
-	
+
 	if(max_frame_num > FBM_MAX_FRAME_NUM)
 		max_frame_num = FBM_MAX_FRAME_NUM;
 
@@ -371,7 +371,7 @@ Handle fbm_init_ex(u32 max_frame_num,
     {
     	for(; i>=0; i--)
     		fbm_free_frame_buffer(&fbm->frames[i].picture);
-    		
+
     	mem_free(fbm);
     	return NULL;
     }
@@ -380,13 +380,13 @@ Handle fbm_init_ex(u32 max_frame_num,
     if(out_3d_mode == _3D_MODE_DOUBLE_STREAM)
     {
        if(fbm_alloc_redBlue_frame_buffer((Handle)fbm) < 0)
-       {   
+       {
             fbm_release((Handle)fbm, parent);
             return NULL;
        }
     }
-    
-    
+
+
     //* initialize empty frame queue semaphore.
     fbm->mutex = semaphore_create(1);
     if(fbm->mutex == NULL)
@@ -394,7 +394,7 @@ Handle fbm_init_ex(u32 max_frame_num,
         fbm_release((Handle)fbm, parent);
         return NULL;
     }
-    
+
     //* put all frame to empty frame queue.
     for(i=0; i<(s32)fbm->max_frame_num; i++)
     {
@@ -409,18 +409,18 @@ void fbm_release(Handle h, void* parent)
 {
     u32     i;
     fbm_t*  fbm;
-    
+
     fbm = (fbm_t*)h;
-    
+
     if(fbm == NULL)
         return;
-        
+
     if(fbm->mutex)
     {
     	semaphore_delete(fbm->mutex, SEM_DEL_ALWAYS);
         fbm->mutex = NULL;
     }
-        
+
     for(i=0; i<fbm->max_frame_num; i++)
     {
     	if(fbm->is_preview_mode)
@@ -436,9 +436,9 @@ void fbm_release(Handle h, void* parent)
     		fbm_free_frame_buffer(&fbm->frames[i].picture);
     	}
     }
-    
+
     mem_free(fbm);
-    
+
     return;
 }
 
@@ -551,24 +551,24 @@ vpicture_t* fbm_decoder_request_frame(Handle h)
 	u32           i;
     fbm_t*        fbm;
     frame_info_t* frame_info;
-    
+
     fbm = (fbm_t*)h;
-    
+
     if(fbm == NULL)
         return NULL;
 
     frame_info = NULL;
-    
+
     for(i=0; i<FBM_REQUEST_FRAME_WAIT_TIME/10; i++)
     {
     	lock(fbm);
-        
+
     	frame_info = fbm_dequeue(&fbm->empty_queue);
     	if(frame_info != NULL)
     	{
         	frame_info->status = FS_DECODER_USING;
     	}
-        
+
     	unlock(fbm);
 
     	if(frame_info != NULL)
@@ -591,18 +591,18 @@ void fbm_decoder_return_frame(vpicture_t* frame, u8 valid, Handle h)
     u8            idx;
     fbm_t*        fbm;
     frame_info_t* frame_info;
-    
+
     fbm = (fbm_t*)h;
 
     if(fbm == NULL)
         return;
-        
+
     idx = fbm_pointer_to_index(frame, h);
     if(idx >= fbm->max_frame_num)
         return;
-        
+
     frame_info = &fbm->frames[idx];
-    
+
     if(lock(fbm) != 0)
         return;
 
@@ -632,9 +632,9 @@ void fbm_decoder_return_frame(vpicture_t* frame, u8 valid, Handle h)
     {
         //* error case, program should not run to here.
     }
-        
+
     unlock(fbm);
-    
+
     return;
 }
 
@@ -644,18 +644,18 @@ void fbm_decoder_share_frame(vpicture_t* frame, Handle h)
     u8            idx;
     fbm_t*        fbm;
     frame_info_t* frame_info;
-    
+
     fbm = (fbm_t*)h;
 
     if(fbm == NULL)
         return;
-        
+
     idx = fbm_pointer_to_index(frame, h);
     if(idx >= fbm->max_frame_num)
         return;
-        
+
     frame_info = &fbm->frames[idx];
-    
+
     if(lock(fbm) != 0)
         return;
 
@@ -672,21 +672,21 @@ vpicture_t* fbm_display_request_frame(Handle h)
 {
     fbm_t*        fbm;
     frame_info_t* frame_info;
-    
+
     fbm = (fbm_t*)h;
-    
+
     if(fbm == NULL)
         return NULL;
-        
+
     frame_info = NULL;
-    
+
     if(lock(fbm) != 0)
         return NULL;
 
     frame_info = fbm_dequeue(&fbm->display_queue);
 
     unlock(fbm);
-    
+
     if(frame_info != NULL)
         return &frame_info->picture;
     else
@@ -699,18 +699,18 @@ void fbm_display_return_frame(vpicture_t* frame, Handle h)
     u8            idx;
     fbm_t*        fbm;
     frame_info_t* frame_info;
-    
+
     fbm = (fbm_t*)h;
-    
+
     if(fbm == NULL)
         return;
-        
+
     idx = fbm_pointer_to_index(frame, h);
     if(idx >= fbm->max_frame_num)
         return;
-        
+
     frame_info = &fbm->frames[idx];
-    
+
     if(lock(fbm) != 0)
         return;
 
@@ -727,9 +727,9 @@ void fbm_display_return_frame(vpicture_t* frame, Handle h)
     {
         //* error case, program should not run to here.
     }
-        
+
     unlock(fbm);
-    
+
     return;
 }
 
@@ -757,14 +757,14 @@ vpicture_t* fbm_display_pick_frame(Handle h)
 {
     fbm_t*        fbm;
     frame_info_t* frame_info;
-    
+
     fbm = (fbm_t*)h;
-    
+
     if(fbm == NULL)
         return NULL;
-    
+
     frame_info = fbm->display_queue;
-    
+
     if(frame_info != NULL)
         return &frame_info->picture;
     else
@@ -776,15 +776,15 @@ vpicture_t* fbm_index_to_pointer(u8 index, Handle h)
 {
     fbm_t*        fbm;
     frame_info_t* frame_info;
-    
+
     fbm = (fbm_t*)h;
-    
+
     if(fbm == NULL)
         return NULL;
-    
+
     if(index >= fbm->max_frame_num)
         return NULL;
-    
+
     frame_info = &fbm->frames[index];
     return &frame_info->picture;
 }
@@ -794,18 +794,18 @@ u8 fbm_pointer_to_index(vpicture_t* frame, Handle h)
 {
     u8            i;
     fbm_t*        fbm;
-    
+
     fbm = (fbm_t*)h;
-    
+
     if(fbm == NULL)
         return 0xff;
-    
+
     for(i=0; i<fbm->max_frame_num; i++)
     {
         if(&fbm->frames[i].picture == frame)
             break;
     }
-    
+
     return (i < fbm->max_frame_num) ? i : 0xff;
 }
 
@@ -813,9 +813,9 @@ u8 fbm_pointer_to_index(vpicture_t* frame, Handle h)
 static void fbm_enqueue(frame_info_t** pp_head, frame_info_t* p)
 {
     frame_info_t* cur;
-    
+
     cur = *pp_head;
-    
+
     if(cur == NULL)
     {
         *pp_head = p;
@@ -826,11 +826,11 @@ static void fbm_enqueue(frame_info_t** pp_head, frame_info_t* p)
     {
         while(cur->next != NULL)
             cur = cur->next;
-        
+
         cur->next = p;
         p->next   = NULL;
-        
-        return;        
+
+        return;
     }
 }
 
@@ -847,9 +847,9 @@ void fbm_enqueue_to_head(frame_info_t ** pp_head, frame_info_t *p)
 static frame_info_t* fbm_dequeue(frame_info_t** pp_head)
 {
     frame_info_t* head;
-    
+
     head = *pp_head;
-    
+
     if(head == NULL)
         return NULL;
     else
@@ -867,7 +867,7 @@ static s32 lock(fbm_t* fbm)
     {
         return -1;
     }
-    
+
     return 0;
 }
 
