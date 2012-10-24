@@ -1,8 +1,9 @@
 
-CC = arm-linux-gnueabihf-gcc
-CPP = arm-linux-gnueabihf-g++
-STRIP = arm-linux-gnueabihf-strip
-AR = arm-linux-gnueabihf-ar
+CROSS_COMPILE = arm-linux-gnueabihf-
+CC = $(CROSS_COMPILE)gcc
+CPP = $(CROSS_COMPILE)g++
+STRIP = $(CROSS_COMPILE)strip
+AR = $(CROSS_COMPILE)ar
 
 DATA_SRC=file
 
