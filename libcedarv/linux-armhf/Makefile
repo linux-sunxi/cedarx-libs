@@ -1,0 +1,53 @@
+
+CC = arm-linux-gnueabihf-gcc
+CPP = arm-linux-gnueabihf-g++
+STRIP = arm-linux-gnueabihf-strip
+AR = arm-linux-gnueabihf-ar
+
+DATA_SRC=file
+
+SRCDIRS     := . \
+			  ./render \
+			  ./vdecoder/fbm \
+			  ./vdecoder/vbv \
+			  ./vdecoder/libvecore \
+			  ./vdecoder/libcedarv \
+			  ./vdecoder/adapter \
+			  ./vdecoder/adapter/avheap \
+
+
+ifeq ($(DATA_SRC), file)
+SRCDIRS+=./file_parser
+#EXT_FLAGS = -DFILE_PARSER
+else
+SRCDIRS+=./stream_parser
+#EXT_FLAGS = -DSTREAM_PARSER
+endif
+
+
+
+INCLUDES := $(foreach dir,$(SRCDIRS),-I$(dir))
+SRCCS    = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
+OBJ  	 := $(SRCCS:%.c=%.o)
+
+CFLAGS = -Wall -O0 -g
+ifeq ($(DATA_SRC), file)
+CFLAGS += -DFILE_PARSER
+else
+CFLAGS += -DSTREAM_PARSER
+endif
+#CFLAGS := $(CFLAGS) $(INCLUDES) -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+CFLAGS := $(CFLAGS) $(INCLUDES) -march=armv7-a -mfpu=neon
+LIBS += -lpthread ./vdecoder/libvecore/libvecore.so
+
+TARGET = ve
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(EXT_FLAGS) $(CFLAGS) -o $@ $^ $(LIBS)
+
+
+clean:
+	@rm -f $(TARGET)
+	@rm -f $(OBJ)
