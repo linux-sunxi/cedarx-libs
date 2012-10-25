@@ -1,54 +1,34 @@
+#
+# Assume standlone toolchain
+#
+CC  = $(CROSS_COMPILE)gcc
+CXX = $(CROSS_COMPILE)g++
+AR  = $(CROSS_COMPILE)ar
 
-CROSS_COMPILE = arm-linux-gnueabihf-
-CC = $(CROSS_COMPILE)gcc
-CPP = $(CROSS_COMPILE)g++
-STRIP = $(CROSS_COMPILE)strip
-AR = $(CROSS_COMPILE)ar
+CEDARDIR=$(shell pwd)
 
-DATA_SRC=file
+include $(CEDARDIR)/cedardefs.mk
 
-SRCDIRS     := . \
-			  ./render \
-			  ./vdecoder/fbm \
-			  ./vdecoder/vbv \
-			  ./vdecoder/libvecore \
-			  ./vdecoder/libcedarv \
-			  ./vdecoder/adapter \
-			  ./vdecoder/adapter/avheap \
+CFLAGS += $(CEDARINCLUDES)
 
+SRCS = \
+	libcedarv/vdecoder.c \
+	libcedarv/awprintf.c \
+	fbm/fbm.c \
+	vbv/vbv.c \
+	adapter/libve_adapter.c \
+	adapter/os_adapter.c \
+	adapter/avheap/avheap.c
 
-ifeq ($(DATA_SRC), file)
-SRCDIRS+=./file_parser
-#EXT_FLAGS = -DFILE_PARSER
-else
-SRCDIRS+=./stream_parser
-#EXT_FLAGS = -DSTREAM_PARSER
-endif
+OBJS = $(SRCS:%.c=%.o)
 
+LIB = libcedarv.a
 
+all: $(LIB)
 
-INCLUDES := $(foreach dir,$(SRCDIRS),-I$(dir))
-SRCCS    = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
-OBJ  	 := $(SRCCS:%.c=%.o)
-
-CFLAGS = -Wall -O0 -g
-ifeq ($(DATA_SRC), file)
-CFLAGS += -DFILE_PARSER
-else
-CFLAGS += -DSTREAM_PARSER
-endif
-#CFLAGS := $(CFLAGS) $(INCLUDES) -march=armv7-a -mfloat-abi=softfp -mfpu=neon
-CFLAGS := $(CFLAGS) $(INCLUDES) -march=armv7-a -mfpu=neon
-LIBS += -lpthread ./vdecoder/libvecore/libvecore.so
-
-TARGET = ve
-
-all: $(TARGET)
-
-$(TARGET): $(OBJ)
-	$(CC) $(EXT_FLAGS) $(CFLAGS) -o $@ $^ $(LIBS)
-
+$(LIB): $(OBJS)
+	$(AR) cq $(LIB) $(OBJS)
 
 clean:
-	@rm -f $(TARGET)
-	@rm -f $(OBJ)
+	rm -f $(LIB) $(OBJS)
+

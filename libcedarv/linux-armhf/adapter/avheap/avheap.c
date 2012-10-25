@@ -37,7 +37,7 @@
 #include <fcntl.h>
 
 #include <avheap.h>
-#include <../../../cedardev_api.h>
+#include <cedardev_api.h>
 
 #define loge(...)
 #define logw(...)
