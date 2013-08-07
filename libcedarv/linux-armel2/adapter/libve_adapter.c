@@ -90,7 +90,7 @@ s32 cedardev_init(void)
 		return -1;
 
 	ioctl(cedarv_osal_ctx->fd, IOCTL_GET_ENV_INFO, (unsigned long)&cedarv_osal_ctx->env_info);
-	cedarv_osal_ctx->env_info.address_macc = (unsigned int)mmap(NULL, 2048, PROT_READ | PROT_WRITE, MAP_SHARED, cedarv_osal_ctx->fd, (int)cedarv_osal_ctx->env_info.address_macc);
+	cedarv_osal_ctx->env_info.address_macc = (unsigned int)mmap(NULL, 2048, PROT_READ | PROT_WRITE, MAP_SHARED, cedarv_osal_ctx->fd, (off_t)cedarv_osal_ctx->env_info.address_macc);
 
 	pthread_mutex_init(&cedarv_osal_mutex, NULL);
 
